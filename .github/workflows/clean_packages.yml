@@ -7,36 +7,36 @@ jobs:
     name: Build a few images
     runs-on: ubuntu-latest
     env:
-      IMAGE: ghcr.io/sondrelg/ghcr-retention-policy-test
+      IMAGE: ghcr.io/jmichalicek/ghcr-retention-policy-test
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v1
-      - run: docker login ghcr.io -u sondrelg --password-stdin <<< ${{ secrets.PAT }}
+      - run: docker login ghcr.io -u jmichalicek --password-stdin <<< ${{ secrets.PAT }}
       # Each build should be different because of the $RANDOM addition
       - name: Build latest
         run: |
           randomString=$(LC_ALL=C tr -dc A-Za-z </dev/urandom | head -c 10)
           echo "FROM scratch as $randomString" > Dockerfile.test
           cat Dockerfile.test
-          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/sondrelg/ghcr-retention-policy-test:latest" --push
+          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/jmichalicek/ghcr-retention-policy-test:latest" --push
       - name: Build latest
         run: |
           randomString=$(LC_ALL=C tr -dc A-Za-z </dev/urandom | head -c 11)
           echo "FROM scratch as $randomString" > Dockerfile.test
           cat Dockerfile.test
-          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/sondrelg/ghcr-retention-policy-test:latest" --push
+          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/jmichalicek/ghcr-retention-policy-test:latest" --push
       - name: Build latest
         run: |
           randomString=$(LC_ALL=C tr -dc A-Za-z </dev/urandom | head -c 12)
           echo "FROM scratch as $randomString" > Dockerfile.test
           cat Dockerfile.test
-          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/sondrelg/ghcr-retention-policy-test:latest" --push
+          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/jmichalicek/ghcr-retention-policy-test:latest" --push
       - name: Build latest
         run: |
           randomString=$(LC_ALL=C tr -dc A-Za-z </dev/urandom | head -c 13)
           echo "FROM scratch as $randomString" > Dockerfile.test
           cat Dockerfile.test
-          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/sondrelg/ghcr-retention-policy-test:latest" --push
+          docker buildx build . -f Dockerfile.test -t "${{ env.IMAGE }}:latest" --cache-to=type=inline --cache-from="ghcr.io/jmichalicek/ghcr-retention-policy-test:latest" --push
 
   clean-ghcr:
     needs: build-containers
@@ -66,7 +66,7 @@ jobs:
           echo "image-versions=$images" >> $GITHUB_OUTPUT
 
       - name: Delete images more than 2 seconds old
-        uses: snok/container-retention-policy@${{ github.ref_name }}
+        uses: jmichalicek/container-retention-policy@add-dry-run
         id: delete-images
         with:
           image-names: ghcr-retention-policy-test
